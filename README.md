@@ -2,10 +2,17 @@
 
 A minimalist joke site about waking up sore.
 
+## Repo layout
+
+```
+site/           # web root — symlink this to /var/www/whathurts
+deploy/nginx/   # nginx config template
+```
+
 ## Local preview
 
 ```bash
-python3 -m http.server 8000
+cd site && python3 -m http.server 8000
 ```
 
 Open http://localhost:8000
@@ -41,19 +48,22 @@ Ensure ports **80** and **443** are open in your firewall.
 
 ## Deploy
 
-Copy site files to the web root:
+Clone the repo on the server, then symlink only the site files to the web root:
 
 ```bash
-sudo mkdir -p /var/www/whathurts
-rsync -av --delete index.html css/ user@your-server:/var/www/whathurts/
+git clone git@github.com:forsethc/whathurts.git
+sudo ln -s /path/to/whathurts/site /var/www/whathurts
 ```
 
-Or from the server after cloning the repo:
+nginx `root` points at `/var/www/whathurts`, which resolves to `site/` — not the whole repo.
+
+To update after pushing changes:
 
 ```bash
-sudo mkdir -p /var/www/whathurts
-sudo cp -r index.html css /var/www/whathurts/
+cd /path/to/whathurts && git pull
 ```
+
+No rsync or copy step needed; the symlink picks up changes immediately.
 
 ## nginx
 
@@ -96,13 +106,3 @@ Certbot installs a systemd timer to renew automatically. No action needed unless
 - Port 80 redirect to HTTPS
 
 Private keys stay in `/etc/letsencrypt/` on the server — never commit them.
-
-## Updating the site
-
-Edit files locally, then rsync again:
-
-```bash
-rsync -av --delete index.html css/ user@your-server:/var/www/whathurts/
-```
-
-No build step required.
