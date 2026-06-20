@@ -45,4 +45,5 @@ main {
   font-size: clamp(2.5rem, 12vw, 6rem);
   font-weight: 800;
   text-align: center;
+  white-space: pre-line;
 }
