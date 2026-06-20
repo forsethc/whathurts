@@ -82,6 +82,15 @@ ssh server 'cd /opt/whathurts && git pull'
 
 **From phone:** edit `site/hurt.txt` in the GitHub app → commit → `git pull` on the server.
 
+nginx should send `Cache-Control: no-cache` for `/hurt.txt` so browsers pick up changes on refresh (see [`deploy/nginx/whathurts.today.conf`](deploy/nginx/whathurts.today.conf)). Add the same `location = /hurt.txt` block to your live server config if it's not there yet, then `sudo nginx -t && sudo systemctl reload nginx`.
+
+Verify:
+
+```bash
+curl -I https://whathurts.today/hurt.txt
+# Cache-Control: no-cache
+```
+
 ### Optional: auto-pull on the server
 
 If you don't want to SSH for `git pull` after phone edits, add a cron job on the server:
