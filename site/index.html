@@ -12,7 +12,12 @@
     <h1>What hurts today?</h1>
   </header>
   <main>
-    <p class="hurt">My back</p>
+    <p class="hurt"></p>
   </main>
+  <script>
+    fetch('hurt.txt')
+      .then(r => r.text())
+      .then(t => { document.querySelector('.hurt').textContent = t.trim(); });
+  </script>
 </body>
 </html>

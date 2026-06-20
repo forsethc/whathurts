@@ -6,6 +6,7 @@ A minimalist joke site about waking up sore.
 
 ```
 site/           # web root — symlink this to /var/www/whathurts
+  hurt.txt      # what hurts today (edit this)
 deploy/nginx/   # nginx config template
 ```
 
@@ -64,6 +65,31 @@ cd /path/to/whathurts && git pull
 ```
 
 No rsync or copy step needed; the symlink picks up changes immediately.
+
+## Updating what hurts
+
+The center text lives in [`site/hurt.txt`](site/hurt.txt) — edit that file only, never the HTML.
+
+**From laptop:**
+
+```bash
+echo "My knee" > site/hurt.txt
+git add site/hurt.txt && git commit -m "knee today" && git push
+ssh server 'cd /opt/whathurts && git pull'
+```
+
+**From phone:** edit `site/hurt.txt` in the GitHub app → commit → `git pull` on the server.
+
+### Optional: auto-pull on the server
+
+If you don't want to SSH for `git pull` after phone edits, add a cron job on the server:
+
+```bash
+# /etc/cron.d/whathurts-pull
+*/15 * * * * root cd /opt/whathurts && git pull --quiet
+```
+
+Edits pushed to GitHub will show up within 15 minutes.
 
 ## nginx
 
