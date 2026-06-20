@@ -7,6 +7,8 @@ A minimalist joke site about waking up sore.
 ```
 site/           # web root — symlink this to /var/www/whathurts
   hurt.txt      # what hurts today (edit this)
+  og-image.svg  # source for link preview image
+  og-image.png  # Open Graph / iMessage preview (generated from svg)
 deploy/nginx/   # nginx config template
 ```
 
@@ -90,6 +92,25 @@ If you don't want to SSH for `git pull` after phone edits, add a cron job on the
 ```
 
 Edits pushed to GitHub will show up within 15 minutes.
+
+## Link preview (Open Graph / iMessage)
+
+iOS and other apps scrape Open Graph meta tags from [`site/index.html`](site/index.html). The preview image is [`site/og-image.png`](site/og-image.png), generated from [`site/og-image.svg`](site/og-image.svg).
+
+To update the preview image:
+
+```bash
+# 1. Edit site/og-image.svg, then regenerate the PNG
+npx @resvg/resvg-js-cli site/og-image.svg site/og-image.png
+
+# 2. Commit and deploy
+git add site/og-image.svg site/og-image.png
+git commit -m "update link preview"
+git push
+ssh server 'cd /opt/whathurts && git pull'
+```
+
+iMessage caches link previews — if the old image persists after deploy, share `https://whathurts.today/?v=2` once to bust the cache.
 
 ## nginx
 
